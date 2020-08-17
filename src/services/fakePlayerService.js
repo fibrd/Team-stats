@@ -1,0 +1,148 @@
+const players = [
+	{
+		_id: 1,
+		firstname: 'Tadeáš',
+		lastname: 'Ondrejička',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 2,
+		firstname: 'František',
+		lastname: 'Motlík',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 3,
+		firstname: 'David',
+		lastname: 'Viduna',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 4,
+		firstname: 'Max',
+		lastname: 'Balej',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 5,
+		firstname: 'Václav',
+		lastname: 'Prošek',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 6,
+		firstname: 'Michal',
+		lastname: 'Kratochvíl',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 7,
+		firstname: 'Tomáš',
+		lastname: 'Bureš',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 8,
+		firstname: 'Dominik',
+		lastname: 'Jansa',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 9,
+		firstname: 'David',
+		lastname: 'Fábry',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 10,
+		firstname: 'Adam',
+		lastname: 'Hofman',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 11,
+		firstname: 'Michal',
+		lastname: 'Brandl',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 12,
+		firstname: 'Slavomír',
+		lastname: 'Katolický',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 13,
+		firstname: 'Radim',
+		lastname: 'Linc',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 14,
+		firstname: 'Marek',
+		lastname: 'Dědeček',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 15,
+		firstname: 'Dominik',
+		lastname: 'Fichtinger',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 16,
+		firstname: 'Martin',
+		lastname: 'Hlava',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 17,
+		firstname: 'Petr',
+		lastname: 'Študent',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 18,
+		firstname: 'Ondřej',
+		lastname: 'Křížka',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 19,
+		firstname: 'Michal',
+		lastname: 'Hlaváček',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+	{
+		_id: 22,
+		firstname: 'Lukáš',
+		lastname: 'Obrcián',
+		finesTotal: 100,
+		finesPaid: 0,
+	},
+]
+
+const getPlayers = () => {
+	return players
+}
+
+export default getPlayers
