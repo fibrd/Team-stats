@@ -1,17 +1,30 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { orderBy } from 'lodash-es'
 
-import Done from './reusable/done'
 import getPlayers from '../services/fakePlayerService'
+import getSections from '../services/fakeSectionService'
 import { paginate } from '../utilities/paginate'
 import Pagination from './reusable/pagination'
+import ListGroup from './reusable/listGroup'
+import PlayersTable from './playersTable'
 
 export default function Players() {
-	const [allPlayers, setAllPlayers] = useState(getPlayers())
-	const [perPage] = useState(10)
+	const [allPlayers, setAllPlayers] = useState([])
+	const [sectionSelected, setSectionSelected] = useState(null)
 	const [pageSelected, setPageSelected] = useState(1)
+	const [perPage] = useState(10)
+	const [sections, setSections] = useState()
+	const [sortColumn, setSortColumn] = useState({
+		path: 'firstname',
+		order: 'asc',
+	})
+
+	useEffect(() => {
+		setAllPlayers(getPlayers())
+		setSections(getSections())
+	}, [])
 
 	const handleCheck = (player) => {
-		console.log('checking', player)
 		const newPlayers = allPlayers.map((p) =>
 			p._id !== player._id ? p : { ...p, finesPaid: p.finesTotal }
 		)
@@ -23,58 +36,63 @@ export default function Players() {
 		setAllPlayers(newPlayers)
 	}
 
+	const handleSelect = (section) => {
+		setPageSelected(1)
+		setSectionSelected(section)
+	}
+
+	const handleSort = (column) => {
+		setSortColumn(column)
+	}
+
 	const handlePageChange = (page) => {
 		setPageSelected(page)
+	}
+
+	const getData = () => {
+		const filtered =
+			sectionSelected && sectionSelected.id === 1
+				? allPlayers.filter((p) => p.finesPaid >= p.finesTotal)
+				: sectionSelected && sectionSelected.id === 2
+				? allPlayers.filter((p) => p.finesPaid < p.finesTotal)
+				: allPlayers
+
+		const sorted = orderBy(filtered, [sortColumn.path], [sortColumn.order])
+		const players = paginate(sorted, pageSelected, perPage)
+
+		return { itemsCount: filtered.length, data: players }
 	}
 
 	if (allPlayers.length === 0)
 		return <p>There are no players in the database.</p>
 
-	const players = paginate(allPlayers, pageSelected, perPage)
+	const { itemsCount, data: players } = getData()
 
 	return (
-		<>
-			<p>Showing {players.length} players in the database.</p>
-			<table className="table">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Fine Total</th>
-						<th>Fine Paid</th>
-						<th></th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					{players.map((player) => (
-						<tr key={player._id}>
-							<td>{player.firstname + ' ' + player.lastname}</td>
-							<td>{player.finesTotal}</td>
-							<td>{player.finesPaid}</td>
-							<td>
-								<Done
-									done={player.finesPaid >= player.finesTotal}
-									onCheck={() => handleCheck(player)}
-								/>
-							</td>
-							<td>
-								<button
-									onClick={() => handleDelete(player)}
-									className="btn btn-danger btn-sm"
-								>
-									Delete
-								</button>
-							</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
-			<Pagination
-				itemsCount={allPlayers.length}
-				onPageChange={handlePageChange}
-				pageSelected={pageSelected}
-				perPage={perPage}
-			/>
-		</>
+		<div className="row">
+			<div className="col-md-2">
+				<ListGroup
+					items={sections}
+					itemSelected={sectionSelected}
+					onSelect={handleSelect}
+				/>
+			</div>
+			<div className="col-md">
+				<p>Showing {players.length} players in the database.</p>
+				<PlayersTable
+					onCheck={handleCheck}
+					onDelete={handleDelete}
+					onSort={handleSort}
+					players={players}
+					sortColumn={sortColumn}
+				/>
+				<Pagination
+					itemsCount={itemsCount}
+					onPageChange={handlePageChange}
+					pageSelected={pageSelected}
+					perPage={perPage}
+				/>
+			</div>
+		</div>
 	)
 }
