@@ -1,44 +1,44 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { orderBy } from 'lodash-es'
 
-import getPlayers from '../services/fakePlayerService'
+import { getPlayers } from '../services/fakePlayerService'
 import getSections from '../services/fakeSectionService'
 import { paginate } from '../utilities/paginate'
 import Pagination from './reusable/pagination'
 import ListGroup from './reusable/listGroup'
 import PlayersTable from './playersTable'
+import SearchBox from './reusable/searchBox'
 
 export default function Players() {
 	const [allPlayers, setAllPlayers] = useState([])
 	const [sectionSelected, setSectionSelected] = useState(null)
 	const [pageSelected, setPageSelected] = useState(1)
 	const [perPage] = useState(10)
+	const [searchQuery, setSearchQuery] = useState('')
 	const [sections, setSections] = useState()
-	const [sortColumn, setSortColumn] = useState({
-		path: 'firstname',
-		order: 'asc',
-	})
+	const [sortColumn, setSortColumn] = useState({})
 
 	useEffect(() => {
 		setAllPlayers(getPlayers())
 		setSections(getSections())
 	}, [])
 
-	const handleCheck = (player) => {
-		const newPlayers = allPlayers.map((p) =>
-			p._id !== player._id ? p : { ...p, finesPaid: p.finesTotal }
-		)
-		setAllPlayers(newPlayers)
-	}
-
 	const handleDelete = (player) => {
 		const newPlayers = allPlayers.filter((p) => p._id !== player._id)
 		setAllPlayers(newPlayers)
 	}
 
+	const handleSearch = ({ currentTarget: input }) => {
+		setSearchQuery(input.value)
+		setPageSelected(1)
+		setSectionSelected(null)
+	}
+
 	const handleSelect = (section) => {
 		setPageSelected(1)
 		setSectionSelected(section)
+		setSearchQuery('')
 	}
 
 	const handleSort = (column) => {
@@ -50,12 +50,16 @@ export default function Players() {
 	}
 
 	const getData = () => {
-		const filtered =
-			sectionSelected && sectionSelected.id === 1
-				? allPlayers.filter((p) => p.finesPaid >= p.finesTotal)
-				: sectionSelected && sectionSelected.id === 2
-				? allPlayers.filter((p) => p.finesPaid < p.finesTotal)
-				: allPlayers
+		let filtered = allPlayers
+
+		if (searchQuery)
+			filtered = allPlayers.filter((p) =>
+				p.name.toLowerCase().includes(searchQuery.toLowerCase())
+			)
+		else if (sectionSelected && sectionSelected.id === 1)
+			filtered = allPlayers.filter((p) => p.finesPaid >= p.finesTotal)
+		else if (sectionSelected && sectionSelected.id === 2)
+			filtered = allPlayers.filter((p) => p.finesPaid < p.finesTotal)
 
 		const sorted = orderBy(filtered, [sortColumn.path], [sortColumn.order])
 		const players = paginate(sorted, pageSelected, perPage)
@@ -70,7 +74,7 @@ export default function Players() {
 
 	return (
 		<div className="row">
-			<div className="col-md-2">
+			<div className="col-md-2 mb-3">
 				<ListGroup
 					items={sections}
 					itemSelected={sectionSelected}
@@ -78,14 +82,19 @@ export default function Players() {
 				/>
 			</div>
 			<div className="col-md">
+				<Link to="/players/new" className="btn btn-secondary mb-3">
+					New Player
+				</Link>
+				<SearchBox value={searchQuery} onChange={handleSearch} />
 				<p>Showing {players.length} players in the database.</p>
-				<PlayersTable
-					onCheck={handleCheck}
-					onDelete={handleDelete}
-					onSort={handleSort}
-					players={players}
-					sortColumn={sortColumn}
-				/>
+				<div className="table-container">
+					<PlayersTable
+						onDelete={handleDelete}
+						onSort={handleSort}
+						players={players}
+						sortColumn={sortColumn}
+					/>
+				</div>
 				<Pagination
 					itemsCount={itemsCount}
 					onPageChange={handlePageChange}

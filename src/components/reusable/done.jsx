@@ -1,14 +1,7 @@
 import React from 'react'
 
-export default function Done({ done = false, onCheck }) {
+export default function Done({ done = false }) {
 	const classes = done ? 'fa fa-check-square-o' : 'fa fa-square-o'
 
-	return (
-		<i
-			onClick={onCheck}
-			style={{ cursor: 'pointer' }}
-			className={classes}
-			aria-hidden="true"
-		></i>
-	)
+	return <i className={classes} aria-hidden="true"></i>
 }

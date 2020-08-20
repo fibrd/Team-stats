@@ -24,11 +24,11 @@ export default function TableHeader({ columns, onSort, sortColumn }) {
 			<tr>
 				{columns.map((column) => (
 					<th
-						className="clickable"
 						key={column.path || column.key}
-						onClick={() => raiseSort(column.path)}
+						className={column.path && 'clickable'}
+						onClick={column.path && (() => raiseSort(column.path))}
 					>
-						{column.label} {renderSortIcon(column)}
+						{column.label} {column.path && renderSortIcon(column)}
 					</th>
 				))}
 			</tr>
