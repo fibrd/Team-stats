@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { orderBy } from 'lodash-es'
 
-import { getPlayers } from '../services/fakePlayerService'
-import getSections from '../services/fakeSectionService'
+import { getPlayers, deletePlayer } from '../services/playerService'
+import getSections from '../services/sectionService'
 import { paginate } from '../utilities/paginate'
 import Pagination from './reusable/pagination'
 import ListGroup from './reusable/listGroup'
 import PlayersTable from './playersTable'
 import SearchBox from './reusable/searchBox'
 
-export default function Players() {
+export default function Players({ history }) {
 	const [allPlayers, setAllPlayers] = useState([])
 	const [sectionSelected, setSectionSelected] = useState(null)
 	const [pageSelected, setPageSelected] = useState(1)
@@ -20,13 +20,26 @@ export default function Players() {
 	const [sortColumn, setSortColumn] = useState({})
 
 	useEffect(() => {
-		setAllPlayers(getPlayers())
+		loadPlayers()
 		setSections(getSections())
 	}, [])
 
-	const handleDelete = (player) => {
-		const newPlayers = allPlayers.filter((p) => p._id !== player._id)
-		setAllPlayers(newPlayers)
+	const loadPlayers = async () => {
+		const { data: players } = await getPlayers()
+		setAllPlayers(players)
+	}
+
+	const handleDelete = async (player) => {
+		const originalPlayers = allPlayers
+		setAllPlayers(allPlayers.filter((p) => p._id !== player._id))
+
+		try {
+			await deletePlayer(player._id)
+		} catch (ex) {
+			if (ex.response && ex.response.status === 404)
+				alert('This movie has already been deleted.')
+			setAllPlayers(originalPlayers)
+		}
 	}
 
 	const handleSearch = ({ currentTarget: input }) => {
@@ -57,9 +70,9 @@ export default function Players() {
 				p.name.toLowerCase().includes(searchQuery.toLowerCase())
 			)
 		else if (sectionSelected && sectionSelected.id === 1)
-			filtered = allPlayers.filter((p) => p.finesPaid >= p.finesTotal)
+			filtered = allPlayers.filter((p) => p.finePaid >= p.fineTotal)
 		else if (sectionSelected && sectionSelected.id === 2)
-			filtered = allPlayers.filter((p) => p.finesPaid < p.finesTotal)
+			filtered = allPlayers.filter((p) => p.finePaid < p.fineTotal)
 
 		const sorted = orderBy(filtered, [sortColumn.path], [sortColumn.order])
 		const players = paginate(sorted, pageSelected, perPage)

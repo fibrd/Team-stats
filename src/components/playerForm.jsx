@@ -2,49 +2,55 @@ import React, { useState, useEffect } from 'react'
 import Joi from 'joi-browser'
 
 import Form from './reusable/form'
-import { getPlayer, savePlayer } from '../services/fakePlayerService'
+import { getPlayer, savePlayer } from '../services/playerService'
 
 export default function PlayerForm({ history, match }) {
 	const [data, setData] = useState({
 		number: '',
 		name: '',
-		finesTotal: '',
-		finesPaid: '',
+		fineTotal: '',
+		finePaid: '',
 	})
 	const [inputs] = useState([
 		{ name: 'number', label: 'Number' },
 		{ name: 'name', label: 'Name' },
-		{ name: 'finesTotal', label: 'Total Fines to Pay' },
-		{ name: 'finesPaid', label: 'Already paid' },
+		{ name: 'fineTotal', label: 'Total Fines to Pay' },
+		{ name: 'finePaid', label: 'Already paid' },
 	])
 
 	useEffect(() => {
-		const playerId = match.params.id
-		if (playerId === 'new') return
-
-		const player = getPlayer(playerId)
-		if (!player) return history.replace('/not-found')
-
-		setData({
-			_id: player._id,
-			number: player.number,
-			name: player.name,
-			finesTotal: player.finesTotal,
-			finesPaid: player.finesPaid,
-		})
-	}, [match.params.id, history])
+		loadPlayer()
+	}, [])
 
 	const schema = {
-		_id: Joi.number(),
-		name: Joi.string().required().label('Name'),
+		_id: Joi.string(),
+		name: Joi.string().min(5).required().label('Name'),
 		number: Joi.number().min(1).max(99).required().label('Number'),
-		finesTotal: Joi.number().min(0).required().label('Fines in Total'),
-		finesPaid: Joi.number().min(0).required().label('Fines Paid'),
+		fineTotal: Joi.number().min(0).required().label('Fines in Total'),
+		finePaid: Joi.number().min(0).required().label('Fines Paid'),
 	}
 
-	const handleSubmit = () => {
+	const loadPlayer = async () => {
+		try {
+			const playerId = match.params.id
+			if (playerId === 'new') return
+			const { data: player } = await getPlayer(playerId)
+			setData({
+				_id: player._id,
+				number: player.number,
+				name: player.name,
+				fineTotal: player.fineTotal,
+				finePaid: player.finePaid,
+			})
+		} catch (ex) {
+			if (ex.response && ex.response.status === 404)
+				history.replace('/not-found')
+		}
+	}
+
+	const handleSubmit = async () => {
+		await savePlayer(data)
 		history.push('/players')
-		savePlayer(data)
 	}
 
 	return (

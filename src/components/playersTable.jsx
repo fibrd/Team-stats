@@ -19,12 +19,12 @@ export default function PlayersTable({
 			),
 		},
 		{ path: 'number', label: '#' },
-		{ path: 'finesTotal', label: 'Total' },
-		{ path: 'finesPaid', label: 'Paid' },
+		{ path: 'fineTotal', label: 'Total' },
+		{ path: 'finePaid', label: 'Paid' },
 		{
 			key: 'done',
 			content: (player) => (
-				<Done done={player.finesPaid >= player.finesTotal} />
+				<Done done={player.finePaid >= player.fineTotal} />
 			),
 		},
 		{
