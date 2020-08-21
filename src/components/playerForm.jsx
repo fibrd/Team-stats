@@ -11,6 +11,9 @@ export default function PlayerForm({ history, match }) {
 		fineTotal: '',
 		finePaid: '',
 	})
+
+	const [errors, setErrors] = useState({})
+
 	const [inputs] = useState([
 		{ name: 'number', label: 'Number' },
 		{ name: 'name', label: 'Name' },
@@ -59,9 +62,11 @@ export default function PlayerForm({ history, match }) {
 			<Form
 				buttonLabel="save"
 				data={data}
+				errors={errors}
 				inputs={inputs}
 				schema={schema}
 				setData={setData}
+				setErrors={setErrors}
 				onSubmit={handleSubmit}
 			/>
 		</div>

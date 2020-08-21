@@ -10,7 +10,7 @@ import ListGroup from './reusable/listGroup'
 import PlayersTable from './playersTable'
 import SearchBox from './reusable/searchBox'
 
-export default function Players({ history }) {
+export default function Players({ user }) {
 	const [allPlayers, setAllPlayers] = useState([])
 	const [sectionSelected, setSectionSelected] = useState(null)
 	const [pageSelected, setPageSelected] = useState(1)
@@ -95,9 +95,11 @@ export default function Players({ history }) {
 				/>
 			</div>
 			<div className="col-md">
-				<Link to="/players/new" className="btn btn-secondary mb-3">
-					New Player
-				</Link>
+				{user && (
+					<Link to="/players/new" className="btn btn-secondary mb-3">
+						New Player
+					</Link>
+				)}
 				<SearchBox value={searchQuery} onChange={handleSearch} />
 				<p>Showing {players.length} players in the database.</p>
 				<div className="table-container">

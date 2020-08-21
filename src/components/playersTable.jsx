@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 import Done from './reusable/done'
 import Table from './reusable/table'
+import auth from '../services/authService'
 
 export default function PlayersTable({
 	onDelete,
@@ -27,16 +28,23 @@ export default function PlayersTable({
 				<Done done={player.finePaid >= player.fineTotal} />
 			),
 		},
-		{
-			key: 'delete',
-			content: (player) => (
-				<i
-					onClick={() => onDelete(player)}
-					className="fa fa-trash-o clickable"
-				></i>
-			),
-		},
 	]
+
+	const user = auth.getCurrentUser()
+	const deleteColumn = {
+		key: 'delete',
+		content: (player) => (
+			<i
+				onClick={() => onDelete(player)}
+				className="fa fa-trash-o clickable"
+			></i>
+		),
+	}
+
+	if (user && user.isAdmin) {
+		columns.push(deleteColumn)
+	}
+
 	return (
 		<Table
 			columns={columns}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Joi from 'joi-browser'
 import { capitalize } from 'lodash-es'
 
@@ -7,13 +7,13 @@ import Input from './input'
 export default function Form({
 	buttonLabel,
 	data,
+	errors,
 	inputs,
 	setData,
+	setErrors,
 	schema,
 	onSubmit,
 }) {
-	const [errors, setErrors] = useState({})
-
 	const validateInput = ({ name, value }) => {
 		const obj = { [name]: value }
 		const inputSchema = { [name]: schema[name] }
