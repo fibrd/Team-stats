@@ -1,7 +1,6 @@
 import http from './httpService'
-import { apiUrl } from '../config.json'
 
-const apiEndpoint = `${apiUrl}/players`
+const apiEndpoint = '/players'
 
 const getPlayer = (playerId) => {
 	return http.get(`${apiEndpoint}/${playerId}`)

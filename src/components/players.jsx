@@ -16,12 +16,12 @@ export default function Players({ user }) {
 	const [pageSelected, setPageSelected] = useState(1)
 	const [perPage] = useState(10)
 	const [searchQuery, setSearchQuery] = useState('')
-	const [sections, setSections] = useState()
+	const [sections, setSections] = useState([])
 	const [sortColumn, setSortColumn] = useState({})
 
 	useEffect(() => {
-		loadPlayers()
 		setSections(getSections())
+		loadPlayers()
 	}, [])
 
 	const loadPlayers = async () => {
@@ -79,9 +79,6 @@ export default function Players({ user }) {
 
 		return { itemsCount: filtered.length, data: players }
 	}
-
-	if (allPlayers.length === 0)
-		return <p>There are no players in the database.</p>
 
 	const { itemsCount, data: players } = getData()
 
